@@ -4,10 +4,14 @@ var type = require("./type")
 
 var mainMap = [
     
-    [new tile("plains"),new tile("plains"),new tile("forest")],
-    [new tile("plains"),new tile("forest"),new tile("forest")],
-    [new tile("desert"),new tile("desert"),new tile("mountains")]
-
+    [new tile("plains"),    new tile("plains"),  new tile("river"),      new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
+    [new tile("plains"),    new tile("plains"), new tile("river"),      new tile("river"),  new tile("forest"),  new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("cave"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
+    [new tile("plains"),    new tile("plains"), new tile("town"),  new tile("river"),  new tile("river"),      new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
+    [new tile("plains"),    new tile("plains"), new tile("desert"),     new tile("desert"), new tile("river"),      new tile("river"),  new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("river"),new tile("river")],
+    [new tile("plains"),    new tile("plains"), new tile("desert"),     new tile("desert"), new tile("desert"),  new tile("river"),  new tile("river"),      new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("river"),new tile("desert")],
+    [new tile("plains"),    new tile("desert"), new tile("desert"),  new tile("desert"), new tile("desert"),  new tile("desert"), new tile("river"),      new tile("river"),  new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("river"),new tile("desert")],
+    [new tile("cave"),    new tile("desert"), new tile("desert"),     new tile("desert"), new tile("desert"),  new tile("desert"), new tile("desert"),  new tile("river"),  new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("river"),new tile("desert"),new tile("desert")],
+ 
 
 ];
 
@@ -109,24 +113,49 @@ gameMap.prototype.move = function(direction){
 
 
 gameMap.prototype.displayMap = function(){
-    var display = [["-","-","-","\n"],["-","-","-","\n"],["-","-","-","\n"]]
 
-    //get location of player
-
-    firstCoord = this.mapLocation[0]
-    secondCoord = this.mapLocation[1]
-    //console.log("Is it this?")
-    display[firstCoord][secondCoord] = "X"
-    //console.log("is it this instead")
-    var typeArray = gameMap.prototype.getTiletype(this.mapLocation);
     //console.log(typeArray)
-    display =    "〰〰〰〰" + "\n" +
-              "|"+display[0][0]+"|"+display[0][1]+"|"+display[0][2]+"|          " +  typeArray[0] + "\n" +
-              "|"+display[1][0]+"|"+display[1][1]+"|"+display[1][2]+"|          " +  typeArray[1] + "\n" +
-              "|"+display[2][0]+"|"+display[2][1]+"|"+display[2][2]+"|          " +  typeArray[2] + "\n" +
-                 "〰〰〰〰" 
+    var display = "" + " ";
+       for(var a =0;a < mainMap[0].length; a++){
+           display = display  +"IIII"
+       }
+    display = display + "I\n"
     
     
+    
+   for(var i =0;i < mainMap.length;i++){
+       display = display + i + "| "
+       for(var a =0;a < mainMap[i].length; a++){
+           
+           if(i == this.mapLocation[0] && a == this.mapLocation[1]){
+                display = display  + "x"
+               display = display + " | "
+           }else{
+               //console.log(mainMap[i][a])
+               display = display  + mainMap[i][a].type.areaSym
+               display = display + " | "
+           }
+           
+       }
+       display = display + "\n"
+   }
+    display = display  + " "
+    for(var a =0;a < mainMap[0].length; a++){
+           display = display +  "IIII"
+    }
+    display = display + "I\n" +" "
+    for(var a =0;a < mainMap[0].length; a++){
+        
+        if(a>9){
+            display = display + "| "+a+""
+        }else{
+            display = display + "| "+a+" "
+        }
+           
+    }
+    display = display + "|\n\n"
+    
+    display = display + "Key:  »:Plains   ʌ:Mountains   =:Desert   ±:Forest   п:Town   §:River   ɵ:Cave"
     return display;
 }
 

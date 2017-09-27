@@ -273,7 +273,7 @@ client.on("message", async message => {
       case "map":
           //this returns the coordinates.
           //message.channel.send("```" + GameFiles[filename].gameMap.mapLocation + "```");
-          message.channel.send("```\n" + GameFiles[filename].gameMap.displayMap() +"```")
+          message.channel.send("```javascript\n" + GameFiles[filename].gameMap.displayMap() +"\n```")
           break;
       case "attack":
           message.channel.send(GameFiles[filename].player.getName() + " swings at the air with... wait, "+GameFiles[filename].player.getName()+ " doesn't have arms.")
@@ -355,18 +355,6 @@ client.on("message", async message => {
   const command = args.shift().toLowerCase();
   
   // Let's go with a few common example commands! Feel free to delete or change those.
-  
-  //random text generator
-  /*if(Math.floor((Math.random() * 3) + 1) == 3){
-        request("http://metaphorpsum.com/sentences/2", function (error, response, body) {
-    if (!error) {
-        message.channel.send(body);
-    } else {
-        console.log(error);
-    }
-        
-    })
-  }*/
     
   if(message.content.indexOf(config.prefix) !== 0) return; 
     
