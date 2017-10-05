@@ -1,10 +1,10 @@
-class Item {
-    
-    constructor(name,type){
+function Item(name,type,weight,itemLevel) {
+
         this.name = name;
-        this.type = new ItemType.type();
-    }
-    
-    
-    
+        this.type = type;
+        this.weight = weight;
+        this.itemLevel = itemLevel;
+ 
 }
+
+module.exports = Item;

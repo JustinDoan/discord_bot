@@ -20,6 +20,7 @@ var inventory = require("./inv");
 var type = require("./type")
 var tile = require("./tile")
 var multi = require("./multi")
+var Item = require("./items")
 var GameFiles = [];
 
 //this varible is for controlling the player while he plays the text game.
@@ -170,9 +171,7 @@ client.on("guildDelete", guild => {
 
 
 client.on("message", async message => {
-    
-    
-    
+     
     
     
   //I spent 3 hours wondering why i kept getting errors, need to block bot messages    
@@ -203,15 +202,26 @@ client.on("message", async message => {
       direction = gameArgs[0].toLowerCase();
       //console.log(direction)
   }
+    //delete user's message
+  message.delete().catch(O_o=>{}); 
   
+  //console.log(GameFiles[filename].messageObject); 
+  var m = GameFiles[filename].messageObject;
+    
+    
+    
   var switchCommand = gameCommand.toLowerCase();
   switch(switchCommand){
       case "?":
       case "help":
-          message.channel.send("Here are all commands \n"+
+          m.edit("Here are all commands \n"+
                               ">inv/inventory\n"+
                               ">move\n"+
                               ">attack\n"+
+                              ">map\n"+
+                              ">rmb  For resetting the location of the message box.\n"+
+                              ">inspect [name of item]\n"+
+                              ">people\n"+
                               ">quit")
           
           
@@ -248,51 +258,78 @@ client.on("message", async message => {
           
           
           
-          message.channel.send(Object.keys(GameFiles).length + " currently has a game save file." + "\n" +
+          m.edit(Object.keys(GameFiles).length + " currently has a game save file." + "\n" +
           onlineUsers + " currently is in game." +"\n" +
           onlineUsersSameLocation + " is in your location. (Including yourself)");
           
           break;
       case "inv":     
       case "inventory":
-          message.channel.send("```\n" +
-                               "UserId: " + GameFiles[filename].player.getName()+"\n"+
+          m.edit("" + GameFiles[filename].player.getName()+" Inventory \n"+                              "```\n" +
+                               
                                "Health: " + GameFiles[filename].player.health+"\n"+
                                "Mana: " + GameFiles[filename].player.mana+"\n"+
-                               "Items: " + GameFiles[filename].inventory.getItems() + "\n"+
                                "Gold: " + GameFiles[filename].inventory.getGold()+"\n"+
                                ""+
+                               "Items: " + GameFiles[filename].inventory.getItems() + "\n"+
+                               
                                "```");
           break;
       case "move":
-          GameFiles[filename].gameMap.move(direction);
-          
-          
-          message.channel.send(GameFiles[filename].player.getName() + " moved "+ direction)
+          GameFiles[filename].gameMap.move(direction);         
+          m.edit("You've moved "+ direction + "\n" + "" + GameFiles[filename].player.getName()+" Map \n"+ "```javascript\n" + GameFiles[filename].gameMap.displayMap() +"\n```")
           break;
       case "map":
           //this returns the coordinates.
           //message.channel.send("```" + GameFiles[filename].gameMap.mapLocation + "```");
-          message.channel.send("```javascript\n" + GameFiles[filename].gameMap.displayMap() +"\n```")
+          m.edit("" + GameFiles[filename].player.getName()+" Map \n"+"```javascript\n" + GameFiles[filename].gameMap.displayMap() +"\n```")
           break;
       case "attack":
-          message.channel.send(GameFiles[filename].player.getName() + " swings at the air with... wait, "+GameFiles[filename].player.getName()+ " doesn't have arms.")
+          m.edit("You swing at the air with... wait, "+"you don't have arms.")
           break;
       case "quit":
           GameFiles[filename].setGameState(false);
-          message.channel.send(message.author +" has quit the game.");
+          
+          m.delete().catch(O_o=>{});
+          GameFiles[filename].messageObject = null;
           break;
       case "debug":
           console.log(GameFiles[filename])
       case "look":
-          message.channel.send(GameFiles[filename].gameMap.getTileDescription());
+          m.edit(GameFiles[filename].gameMap.getTileDescription());
+          break;
+      case "inspect":
+          m.edit("```javascript\n" +GameFiles[filename].inventory.inspect(gameArgs.join(" "))+"\n```");
+          break;
+      case "createitem":            //name,type,weight,level
+          //console.log(new Item("Sword of Testing","Sword",10,5))
+          GameFiles[filename].inventory.addItem(new Item("Sword of Testing","Sword",10,5));
+          GameFiles[filename].inventory.addItem(new Item("Sword of Debugging","Sword",15,10));
+          GameFiles[filename].inventory.addItem(new Item("Axe of Doom","Axe",30,15));
+          //console.log(GameFiles[filename].inventory.getItems());
+          m.edit("" + GameFiles[filename].player.getName()+" Inventory \n"+                              "```\n" +
+                               
+                               "Health: " + GameFiles[filename].player.health+"\n"+
+                               "Mana: " + GameFiles[filename].player.mana+"\n"+
+                               "Gold: " + GameFiles[filename].inventory.getGold()+"\n"+
+                               ""+
+                               "Items: " + GameFiles[filename].inventory.getItems() + "\n"+
+                               
+                               "```")
+          break;
+      case "rmb":
+          var newMessage = await message.channel.send(m.content);
+          m.delete().catch(O_o=>{});
+          GameFiles[filename].messageObject = newMessage;
           break;
       default:
-          message.channel.send("That command does not exist.");
+          m.edit("That command does not exist.");
           break;
+    
+          
+       //append the username of each message with the username of the player     //TODO         
           
   }
-    
     
     
 });
@@ -605,16 +642,23 @@ client.on("message", async message => {
       var userID = message.author.toString();
       var filename = userID+"_File";
       
+      
+      
+      
       //we need the player's ID both for the name of the character, and as the name of the main gamefile.
       //we check if there isn't already a game file first, if not, then we create a new one.
       if(typeof GameFiles[filename] != "undefined"){
+          var m = await message.channel.send(message.author + " has rejoined the Game.");
           GameFiles[filename].gameState = true;
-          message.channel.send(message.author + " has rejoined the Game.");
+          GameFiles[filename].messageObject = m;
+          
       }else{
-          GameFiles[filename] = new game(userID,true);
+          var m = await message.channel.send(message.author + " has joined the Game.");
+          GameFiles[filename] = new game(userID,true,m);
+          GameFiles[filename].inventory.addItem(new Item("Copper Dagger","Dagger",3,1));
       }
 
-      message.channel.send(message.author + " has joined the Game.");
+      message.delete().catch(O_o=>{});
                        
              
       

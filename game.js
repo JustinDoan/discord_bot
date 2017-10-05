@@ -5,11 +5,12 @@ var inventory = require("./inv");
 
 
 
-function game(userId,gameState){
+function game(userId,gameState,messageObject){
         this.player = new player(userId);
         this.inventory = new inventory();
         this.gameState = gameState;
         this.gameMap = new gameMap();
+        this.messageObject = messageObject;
     }
     
 
