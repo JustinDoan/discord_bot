@@ -11,11 +11,14 @@ function game(userId,gameState,messageObject){
         this.gameState = gameState;
         this.gameMap = new gameMap();
         this.messageObject = messageObject;
+        this.currentEnemy = null;
+        this.battleState = false;
     }
     
 
 game.prototype.setGameState = function(gameState){
         this.gameState = gameState;
     }
+
 
 module.exports = game;

@@ -21,6 +21,7 @@ var type = require("./type")
 var tile = require("./tile")
 var multi = require("./multi")
 var Item = require("./items")
+var enemy = require("./enemy")
 var GameFiles = [];
 
 //this varible is for controlling the player while he plays the text game.
@@ -184,6 +185,7 @@ client.on("message", async message => {
   //the filename of the specific game object is userID+"_file";
   //This is so we can have multiple games at the same time.
     //console.log(GameFiles[filename].gameState)
+    //check if their gamestate is active, if not then we just ignore
   try{
       if (GameFiles[filename].gameState === false) return;
   }catch(err){
@@ -209,9 +211,21 @@ client.on("message", async message => {
   var m = GameFiles[filename].messageObject;
     
     
+  //here we check if the player is currently in a battle
+
+  
+  //get the command that was used.
     
   var switchCommand = gameCommand.toLowerCase();
-  switch(switchCommand){
+    
+    //we check both if the player is in battleState and if there is an enemy to fight
+  if(GameFiles[filename].battleState = true && GameFiles[filename].currentEnemy != null){
+      //if we find that the player is in a battle state and there is an enemy available to find, we continue onto a different switch which has certain commands pertaining to battling.
+
+
+  }else{
+      //otherwise we just continue with the normal list.
+      switch(switchCommand){
       case "?":
       case "help":
           m.edit("Here are all commands \n"+
@@ -330,6 +344,15 @@ client.on("message", async message => {
        //append the username of each message with the username of the player     //TODO         
           
   }
+      
+  }
+
+
+
+
+  
+  
+  
     
     
 });
