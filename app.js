@@ -43,8 +43,14 @@ var con = mysql.createConnection({
     database: 'points'
 });
 
-
-
+fs.readFile('GameFilesSaves.json', 'utf8', function(err, data) {  
+    if (err){
+        console.log("no file found")
+        return;
+    };
+    GameFiles = JSON.parse(data);
+});
+ 
 
 function getpoints(con,member){
     console.log(member);
@@ -813,6 +819,19 @@ client.on("message", async message => {
     const fetched = await message.channel.fetchMessages({count: deleteCount});
     message.channel.bulkDelete(fetched)
       .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+  }
+    
+  if(command === "savefiles"){
+      if(!message.member.roles.some(r=>["Admin","Bot"].includes(r.name)) )
+        return message.reply("Sorry, you don't have permissions to use this!");
+      savefiles = JSON.stringify(GameFiles);
+      
+      fs.writeFile('GameFilesSaves.json', savefiles, function (err) {
+    if (err) 
+        return console.log(err);
+    console.log('Saved all Game Info');
+});
+      
   }
 });
 

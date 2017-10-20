@@ -7,6 +7,11 @@ function player(UserId){
         this.carryLimit = 100;
         this.speed = 1.0;
         this.chance = 1.0;
+        this.headItem = null;
+        this.chestItem = null;
+        this.pantsItem = null;
+        this.glovesItem = null;
+        this.weapon = null;
 }
 
 
@@ -17,6 +22,7 @@ function player(UserId){
         this.health = this.health - damage
         if (this.health < 1){
             player.prototype.die();
+            //This might not work how i think it will.
         }
         //maybe return health back to function?
     } 
