@@ -14,14 +14,14 @@ inventory.prototype.getItems = function(){
     //console.log("Getting Item List");
     for(i=0;i<this.items.length; i++){
         //console.log(i);
- 
+        
        for(v=0;v<itemArray.length; v++){
-           console.log(v);
+           //console.log(v);
            
            
            try{
-               console.log(this.items[i].name + "is being compared to " + itemArray[v][0].name + "\n");
-               console.log(underscore.isEqual(this.items[i],itemArray[v][0]));
+               //console.log(this.items[i].name + "is being compared to " + itemArray[v][0].name + "\n");
+               //console.log(underscore.isEqual(this.items[i],itemArray[v][0]));
                if(underscore.isEqual(this.items[i],itemArray[v][0])){
                    flag = false;
                     itemArray[v][1] = itemArray[v][1] + 1;
@@ -32,13 +32,23 @@ inventory.prototype.getItems = function(){
            }catch(err){
                //push item to array if we out of bounds, usually due to first item.
                //itemArray.push([this.items[i],1])
-               console.log("out of array bounds error")
+               //console.log("out of array bounds error")
                break;
            }
            
            
        }
-       if(flag){itemArray.push([this.items[i],1])}
+       if(flag){
+           if(this.items[i].equipped){
+               //console.log("Item was already equipped")
+               //break;
+           }else{
+               //console.log("Item was not equipped, added to list to display")
+               itemArray.push([this.items[i],1])
+           }
+           
+           
+       }
        
         
         
@@ -66,7 +76,7 @@ inventory.prototype.inspect = function(itemToInspect){
     var itemInfo = "";
     
     for(i=0;i<this.items.length; i++){
-        console.log(this.items[i].name === itemToInspect);
+        //console.log(this.items[i].name === itemToInspect);
         if(this.items[i].name === itemToInspect){
             
             itemInfo = itemInfo +  this.items[i].name + " Lv. " + this.items[i].itemLevel+ "\n" +
@@ -87,6 +97,26 @@ inventory.prototype.getGold = function(){
 }
 inventory.prototype.addItem = function(item){
     this.items.push(item);
+}
+inventory.prototype.getItemByName = function(itemName){
+    
+    //if we need to get an item object when we only have the name of the item
+
+    for(i=0;i<this.items.length; i++){
+        //console.log(this.items[i].name === itemToInspect);
+        if(this.items[i].name === itemName){
+            
+               return this.items[i];
+        }
+        
+        
+    }
+    
+    
+    
+    
+    
+    
 }
 
 module.exports = inventory;

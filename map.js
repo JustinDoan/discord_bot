@@ -4,7 +4,7 @@ var type = require("./type")
 
 var mainMap = [
     
-    [new tile("plains"),    new tile("plains"),  new tile("river"),      new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
+    [new tile("plains"),    new tile("cave"),  new tile("river"),      new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
     [new tile("plains"),    new tile("plains"), new tile("river"),      new tile("river"),  new tile("forest"),  new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("cave"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
     [new tile("plains"),    new tile("plains"), new tile("town"),  new tile("river"),  new tile("river"),      new tile("forest"), new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("plains"),new tile("river")],
     [new tile("plains"),    new tile("plains"), new tile("desert"),     new tile("desert"), new tile("river"),      new tile("river"),  new tile("forest"),  new tile("forest"), new tile("forest"), new tile("forest"),new tile("mountains"),new tile("mountains"),new tile("forest"),new tile("forest"),new tile("forest"),new tile("plains"),new tile("plains"),new tile("river"),new tile("river")],
@@ -15,8 +15,17 @@ var mainMap = [
 
 ];
 
+var cave = [
+    [new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),],
+    [new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),],
+    [new tile("cave"),new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),],
+    [new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),new tile("rock"),]
+]
+
 function gameMap(){
-        this.mapLocation = [0,0];
+        this.mapLocationMain = [0,0];
+        this.mapLocationCave = [0,0];
+        this.currentMap = "main";
 }
 
 
@@ -47,7 +56,7 @@ gameMap.prototype.getTileDescription = function(){
 }
 
 
-
+//not being used yet
 gameMap.prototype.getTiletype = function(mapLocation){
 
     var firstArray = mainMap[mapLocation[0]];
@@ -70,69 +79,154 @@ gameMap.prototype.getTiletype = function(mapLocation){
     
 }
 
+gameMap.prototype.enter = function(){
+    
+    
+    //var first = this.mapLocationMain[0]
+    //var second = this.mapLocationMain[1]
+    
+    if(this.currentMap == "main"){
+        //console.log("Map is main");
+        var first = this.mapLocationMain[0];
+        var second = this.mapLocationMain[1];
+        
+        //console.log(first,second);
+//console.log(mainMap[first][second].type);
+        if(mainMap[first][second].type.areaType == "Cave"){
+            //console.log("Set currentMap to Cave");
+            this.currentMap = "cave";
+            
+            return true;
+        }else{
+           return false;
+        }
+        
+        
+        
+    }else if(this.currentMap == "cave"){
+        //console.log("Map is cave");
+        var first = this.mapLocationCave[0];
+        var second = this.mapLocationCave[1];
+        
+        
+        if(cave[first][second].type.areaType == "Cave"){
+            //console.log("Set currentMap to Main");
+            this.currentMap = "main";
+            return true;
+        }else{
+            //don't leave cave
+            return false;
+        }
+    }
+        
+    
+    
+}
+
+
+
+//have to make this work somehow
 gameMap.prototype.move = function(direction){
      
+    //we can copy paste this switch for each map
+    //or make an if else to select the map to use.
+    
+    if(this.currentMap == "cave"){
+        
+        var Map = cave;
+        var mapLocation = this.mapLocationCave;
+    }else{
+        
+        var Map = mainMap;
+        var mapLocation = this.mapLocationMain;
+    }
+    
     
     
     switch(direction){
             
         case "north":
-            if(this.mapLocation[0] - 1 === mainMap.length - mainMap.length - 1){
-                this.mapLocation[0] = mainMap.length - 1;
+            if(mapLocation[0] - 1 === Map.length - Map.length - 1){
+                mapLocation[0] = Map.length - 1;
             }else{
-                this.mapLocation[0] -= 1;
+                mapLocation[0] -= 1;
             }
             
             break;
         case "south":
-            if(this.mapLocation[0] + 1 === mainMap.length){
-                this.mapLocation[0] = mainMap.length - mainMap.length;
+            if(mapLocation[0] + 1 === Map.length){
+                mapLocation[0] = Map.length - Map.length;
             }else{
-                this.mapLocation[0] += 1;
+                mapLocation[0] += 1;
             }
             
             
             break;
         case "west":
-            if(this.mapLocation[1] - 1 === mainMap[0].length - mainMap[0].length - 1){
-                this.mapLocation[1] = mainMap[0].length - 1;
+            if(mapLocation[1] - 1 === Map[0].length - Map[0].length - 1){
+                mapLocation[1] = Map[0].length - 1;
             }else{
-                this.mapLocation[1] -= 1;
+                mapLocation[1] -= 1;
             }
             
             break;
         case "east":
-            if(this.mapLocation[1] + 1 === mainMap[0].length){
-                this.mapLocation[1] = mainMap[0].length - mainMap[0].length;
+            if(mapLocation[1] + 1 === Map[0].length){
+                mapLocation[1] = Map[0].length - Map[0].length;
             }else{
-                this.mapLocation[1] += 1;
+                mapLocation[1] += 1;
             }
             break;
                     }
+    
+    if(this.currentMap == "cave"){
+        
+        this.mapLocationCave = mapLocation;
+          
+    }else{
+        
+        this.mapLocationMain = mapLocation;
+        
+    }
+    
+    
+    
 }
 
-
+//also have to make this work somehow
 gameMap.prototype.displayMap = function(){
 
+    if(this.currentMap == "cave"){
+        
+        var mapobject = cave;
+        var mapLocation = this.mapLocationCave;
+    }else{
+        
+        var mapobject = mainMap;
+        var mapLocation = this.mapLocationMain;
+    }
+    
+    
+    
     //console.log(typeArray)
     var display = "" + " ";
-       for(var a =0;a < mainMap[0].length; a++){
+       for(var a =0;a < mapobject[0].length; a++){
            display = display  +"IIII"
        }
     display = display + "I\n"
     
     
     
-   for(var i =0;i < mainMap.length;i++){
+   for(var i =0;i < mapobject.length;i++){
        display = display + i + "| "
-       for(var a =0;a < mainMap[i].length; a++){
+       for(var a =0;a < mapobject[i].length; a++){
            
-           if(i == this.mapLocation[0] && a == this.mapLocation[1]){
+           if(i == mapLocation[0] && a == mapLocation[1]){
                 display = display  + "x"
                display = display + " | "
            }else{
                //console.log(mainMap[i][a])
-               display = display  + mainMap[i][a].type.areaSym
+               display = display  +mapobject[i][a].type.areaSym
                display = display + " | "
            }
            
@@ -140,11 +234,11 @@ gameMap.prototype.displayMap = function(){
        display = display + "\n"
    }
     display = display  + " "
-    for(var a =0;a < mainMap[0].length; a++){
+    for(var a =0;a < mapobject[0].length; a++){
            display = display +  "IIII"
     }
     display = display + "I\n" +" "
-    for(var a =0;a < mainMap[0].length; a++){
+    for(var a =0;a < mapobject[0].length; a++){
         
         if(a>9){
             display = display + "| "+a+""
@@ -155,7 +249,7 @@ gameMap.prototype.displayMap = function(){
     }
     display = display + "|\n\n"
     
-    display = display + "Key:  »:Plains   ʌ:Mountains   =:Desert   ±:Forest   п:Town   §:River   ɵ:Cave"
+    display = display + "Key:  »:Plains   ʌ:Mountains   =:Desert   ±:Forest   п:Town   §:River   ɵ:Cave   0:Rock"
     return display;
 }
 

@@ -20,5 +20,4 @@ game.prototype.setGameState = function(gameState){
         this.gameState = gameState;
     }
 
-
 module.exports = game;

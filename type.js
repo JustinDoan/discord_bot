@@ -55,6 +55,12 @@ function type(areaType){
             this.chanceModifier = 1.2;
             this.areaSym = "±"
             break;
+        case "rock":
+            this.areaType = "Rock"
+            this.speedModifier = 0.7;
+            this.chanceModifier = 1.2;
+            this.areaSym = "0"
+            break;
         default:
             break;
                }
